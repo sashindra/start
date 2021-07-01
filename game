@@ -1,0 +1,45 @@
+def create_block():
+    """ Создает блок в случайной позиции на карте """
+    global BLOCK
+    posx = SEG_SIZE * (random.randint(1, (WIDTH-SEG_SIZE) / SEG_SIZE))
+    posy = SEG_SIZE * (random.randint(1, (HEIGHT-SEG_SIZE) / SEG_SIZE))
+     
+    # блок это кружочек красного цвета
+    BLOCK = c.create_oval(posx, posy,
+                          posx + SEG_SIZE,
+                          posy + SEG_SIZE,
+                          fill="red")
+                          def main():
+    global IN_GAME
+     
+    if IN_GAME:
+        # Двигаем змейку
+        s.move()
+  
+        # Определяем координаты головы
+        head_coords = c.coords(s.segments[-1].instance)
+        x1, y1, x2, y2 = head_coords
+     
+        # Столкновение с границами экрана
+        if x1 < 0 or x2 > WIDTH or y1 < 0 or y2 > HEIGHT:
+            IN_GAME = False
+     
+        # Поедание яблок 
+        elif head_coords == c.coords(BLOCK):
+            s.add_segment()
+            c.delete(BLOCK)
+            c.create_block()
+ 
+        # Самоедство
+        else:
+            # Проходим по всем сегментам змеи
+            for index in range(len(s.segments)-1):
+                if c.coords(s.segments[index].instance) == head_coords:
+                    IN_GAME = False
+     
+    # Если не в игре выводим сообщение о проигрыше
+    else:
+          c.create_text(WIDTH/2, HEIGHT/2,
+                              text="GAME OVER!",
+                              font="Arial 20",
+                              fill="#ff0000")
